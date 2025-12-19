@@ -1,0 +1,1833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collapse Rules & Ten Commandments</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .section {
+            margin: 40px 0;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: #e9ecef;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .tab:hover {
+            background: #dee2e6;
+            transform: translateY(-2px);
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .comparison-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .comparison-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .comparison-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .comparison-card .rule-name {
+            font-weight: bold;
+            color: #764ba2;
+            margin-bottom: 8px;
+        }
+
+        .comparison-card .commandment {
+            color: #28a745;
+            margin: 8px 0;
+            font-weight: 500;
+        }
+
+        .comparison-card .parallel {
+            color: #666;
+            font-style: italic;
+            margin: 8px 0;
+        }
+
+        .comparison-card .principle {
+            color: #495057;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .test-results {
+            margin-top: 20px;
+        }
+
+        .test-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #ccc;
+            transition: all 0.3s;
+        }
+
+        .test-item.prevented {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+
+        .test-item.not-prevented {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .test-item h4 {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-icon {
+            font-size: 1.2em;
+        }
+
+        .status-icon.prevented::before {
+            content: "✓";
+            color: #28a745;
+        }
+
+        .status-icon.not-prevented::before {
+            content: "✗";
+            color: #dc3545;
+        }
+
+        .reason {
+            color: #495057;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .fork-bomb-controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .fork-bomb-controls label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .fork-bomb-controls input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .fork-bomb-controls button {
+            margin-top: 15px;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .fork-bomb-controls button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .fork-bomb-state {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .fork-bomb-state h4 {
+            margin-bottom: 10px;
+            color: #856404;
+        }
+
+        .fork-bomb-state .state-item {
+            margin: 5px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .cancer-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .cancer-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .cancer-card h4 {
+            color: #dc3545;
+            margin-bottom: 10px;
+        }
+
+        .cancer-card .before {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .cancer-card .after {
+            color: #28a745;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .entity-data {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 5px;
+            overflow-x: auto;
+        }
+
+        /* Stone Tablets */
+        .tablets-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+            perspective: 1000px;
+        }
+
+        .tablet {
+            position: relative;
+            width: 350px;
+            min-height: 600px;
+            background: linear-gradient(135deg, #d4c5b9 0%, #c4b5a9 50%, #b4a599 100%);
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px),
+                radial-gradient(circle at 30% 40%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(0,0,0,0.1) 0%, transparent 50%);
+            border: 8px solid #8b7355;
+            border-radius: 15px;
+            padding: 40px 30px;
+            box-shadow: 
+                0 20px 60px rgba(0,0,0,0.5),
+                inset 0 2px 10px rgba(255,255,255,0.3),
+                inset 0 -2px 10px rgba(0,0,0,0.2),
+                0 0 0 2px rgba(139, 115, 85, 0.3);
+            transform: rotateY(-5deg) rotateX(2deg);
+            transition: transform 0.3s;
+        }
+
+        .tablet.right {
+            transform: rotateY(5deg) rotateX(2deg);
+        }
+
+        .tablet:hover {
+            transform: rotateY(0deg) rotateX(0deg) scale(1.02);
+        }
+
+        .tablet::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 20px;
+            background: #8b7355;
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .tablet-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid rgba(139, 115, 85, 0.5);
+        }
+
+        .tablet-header h3 {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.8em;
+            color: #5a4a3a;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .tablet-header .tablet-number {
+            font-size: 0.9em;
+            color: #6b5a4a;
+            font-style: italic;
+        }
+
+        .commandment-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .commandment-item {
+            margin: 25px 0;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-left: 4px solid #8b7355;
+            border-radius: 5px;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .commandment-item:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+        }
+
+        .commandment-number {
+            position: absolute;
+            left: -15px;
+            top: 10px;
+            width: 30px;
+            height: 30px;
+            background: #8b7355;
+            color: #f4e4c1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .commandment-text {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.1em;
+            color: #4a3a2a;
+            line-height: 1.8;
+            margin-left: 25px;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.3);
+        }
+
+        .commandment-text strong {
+            color: #3a2a1a;
+            font-weight: 600;
+        }
+
+        .tablets-section {
+            background: rgba(255,255,255,0.95);
+            padding: 40px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .tablets-section h2 {
+            text-align: center;
+            color: #5a4a3a;
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            font-family: 'Times New Roman', serif;
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
+        }
+
+        body.dark-mode .container {
+            background: #2d2d44;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .section {
+            background: #3a3a52;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .comparison-card {
+            background: #3a3a52;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .test-item {
+            background: #3a3a52;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode h1, body.dark-mode h2 {
+            color: #9b87f5;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9em;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Tooltips */
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 300px;
+            background-color: #333;
+            color: #fff;
+            text-align: left;
+            border-radius: 8px;
+            padding: 12px;
+            position: absolute;
+            z-index: 1001;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9em;
+            line-height: 1.4;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Clickable Commandments */
+        .commandment-item.clickable {
+            cursor: pointer;
+        }
+
+        .commandment-item.clickable:hover {
+            background: rgba(255,255,255,0.3);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Export Buttons */
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .export-btn {
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .export-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+        }
+
+        .export-btn.secondary {
+            background: #17a2b8;
+        }
+
+        .export-btn.secondary:hover {
+            background: #138496;
+        }
+
+        /* Save/Load */
+        .save-load-controls {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .save-load-btn {
+            padding: 8px 16px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+
+        .save-load-btn:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        /* Progress Indicator */
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+            animation: progress 2s ease-in-out;
+        }
+
+        @keyframes progress {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        /* Keyboard Shortcuts Help */
+        .shortcuts-help {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.85em;
+            max-width: 250px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 999;
+            display: none;
+        }
+
+        .shortcuts-help.show {
+            display: block;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .shortcuts-help h4 {
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .shortcuts-help kbd {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+
+        /* Animated Transitions */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Enhanced Comparison Cards */
+        .comparison-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .comparison-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .comparison-card:hover::before {
+            left: 100%;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 1002;
+            display: none;
+            animation: toastSlide 0.3s;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        @keyframes toastSlide {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* Enhanced Fork Bomb Visualization */
+        .fork-bomb-viz {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .process-dot {
+            width: 8px;
+            height: 8px;
+            background: #dc3545;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        /* Accessibility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* Focus styles for keyboard navigation */
+        button:focus, input:focus, .commandment-item:focus {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tablets-container {
+                gap: 20px;
+            }
+
+            .tablet {
+                width: 100%;
+                max-width: 350px;
+                transform: none;
+            }
+
+            .tablet.right {
+                transform: none;
+            }
+
+            .tablet:hover {
+                transform: scale(1.01);
+            }
+
+            .theme-toggle {
+                top: 10px;
+                right: 10px;
+                padding: 8px 16px;
+                font-size: 0.8em;
+            }
+
+            .shortcuts-help {
+                bottom: 10px;
+                right: 10px;
+                max-width: 200px;
+                font-size: 0.75em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
+        <span id="themeIcon">🌙</span> <span id="themeText">Dark Mode</span>
+    </button>
+
+    <div class="shortcuts-help" id="shortcutsHelp">
+        <h4>Keyboard Shortcuts</h4>
+        <div><kbd>1</kbd> - Ten Commandments</div>
+        <div><kbd>2</kbd> - Comparison</div>
+        <div><kbd>3</kbd> - Fork Bomb Testing</div>
+        <div><kbd>4</kbd> - Cancer Examples</div>
+        <div><kbd>?</kbd> - Toggle this help</div>
+        <div><kbd>D</kbd> - Toggle dark mode</div>
+        <div><kbd>E</kbd> - Export results</div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="container">
+        <h1>Collapse Rules & Ten Commandments</h1>
+        <p class="subtitle">A comparison of physical laws and moral principles</p>
+        <p style="text-align: center; font-size: 0.85em; color: #999; margin-top: -20px; margin-bottom: 20px;">
+            Press <kbd>?</kbd> for keyboard shortcuts
+        </p>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('tablets')" data-tab="tablets">Ten Commandments</button>
+            <button class="tab" onclick="showTab('comparison')" data-tab="comparison">Comparison</button>
+            <button class="tab" onclick="showTab('forkbomb')" data-tab="forkbomb">Fork Bomb Testing</button>
+            <button class="tab" onclick="showTab('cancer')" data-tab="cancer">Cancer Examples</button>
+        </div>
+
+        <!-- Ten Commandments Tablets Tab -->
+        <div id="tablets" class="tab-content active">
+            <div class="tablets-section">
+                <h2>The Ten Commandments</h2>
+                <div class="tablets-container">
+                    <div class="tablet">
+                        <div class="tablet-header">
+                            <h3>FIRST TABLET</h3>
+                            <div class="tablet-number">Duties to God</div>
+                        </div>
+                        <ul class="commandment-list" id="firstTablet"></ul>
+                    </div>
+                    <div class="tablet right">
+                        <div class="tablet-header">
+                            <h3>SECOND TABLET</h3>
+                            <div class="tablet-number">Duties to Others</div>
+                        </div>
+                        <ul class="commandment-list" id="secondTablet"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Tab -->
+        <div id="comparison" class="tab-content">
+            <div class="section">
+                <h2>Collapse Rules vs Ten Commandments</h2>
+                <p style="text-align: center; margin-bottom: 20px; color: #666; font-style: italic;">
+                    Each physical collapse rule corresponds to a moral commandment from the tablets above.
+                    <span class="tooltip">ℹ️
+                        <span class="tooltiptext">Hover over comparison cards to see detailed explanations. Click on cards to view more information about how physical laws mirror moral principles.</span>
+                    </span>
+                </p>
+                <div class="comparison-grid" id="comparisonGrid"></div>
+            </div>
+        </div>
+
+        <!-- Fork Bomb Testing Tab -->
+        <div id="forkbomb" class="tab-content">
+            <div class="section">
+                <h2>Fork Bomb Testing</h2>
+                <div class="fork-bomb-controls">
+                    <label>Replication Rate:</label>
+                    <input type="number" id="replicationRate" value="2" min="1" max="10" aria-label="Replication rate">
+                    
+                    <label>Initial Process Count:</label>
+                    <input type="number" id="processCount" value="1" min="1" aria-label="Initial process count">
+                    
+                    <label>Fork Generations:</label>
+                    <input type="number" id="generations" value="3" min="1" max="10" aria-label="Fork generations">
+                    
+                    <div class="save-load-controls">
+                        <button class="save-load-btn" onclick="saveConfiguration()">💾 Save Config</button>
+                        <button class="save-load-btn" onclick="loadConfiguration()">📂 Load Config</button>
+                    </div>
+                    
+                    <button onclick="testForkBomb()">Test Fork Bomb</button>
+                    
+                    <div class="export-buttons" id="exportButtons" style="display: none;">
+                        <button class="export-btn" onclick="exportResults('json')">📥 Export JSON</button>
+                        <button class="export-btn secondary" onclick="exportResults('csv')">📊 Export CSV</button>
+                        <button class="export-btn secondary" onclick="exportResults('text')">📄 Export Text</button>
+                    </div>
+                </div>
+
+                <div id="forkBombState" class="fork-bomb-state" style="display: none;">
+                    <h4>Fork Bomb State</h4>
+                    <div id="stateContent"></div>
+                </div>
+
+                <div id="collapseRulesResults" class="test-results"></div>
+                <div id="commandmentsResults" class="test-results"></div>
+            </div>
+        </div>
+
+        <!-- Cancer Examples Tab -->
+        <div id="cancer" class="tab-content">
+            <div class="section">
+                <h2>Cancer Examples with Collapse Rules</h2>
+                <div class="cancer-examples" id="cancerExamples"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Collapse Rules
+        const collapseRules = {
+            unlimited_copies_violate_causality: (entity) => {
+                entity.replication_rate = Math.min(entity.replication_rate, 1);
+                return entity;
+            },
+            entities_without_origin_invalidated: (entity) => {
+                if (!entity.origin) {
+                    entity.status = 'invalidated';
+                }
+                return entity;
+            },
+            effects_may_not_recursively_cause: (entity) => {
+                if (entity.causes_itself) {
+                    entity.effect = null;
+                }
+                return entity;
+            },
+            branching_timelines_collapsed: (entity) => {
+                if (entity.branches > 1) {
+                    entity.branches = 1;
+                    entity.state = 'collapsed';
+                }
+                return entity;
+            },
+            unobservable_states_rejected: (entity) => {
+                if (!entity.observable) {
+                    entity.status = 'rejected';
+                }
+                return entity;
+            },
+            processes_destroying_host_deleted: (entity) => {
+                if (entity.destroys_host) {
+                    entity.status = 'deleted';
+                }
+                return entity;
+            },
+            order_without_cost_forbidden: (entity) => {
+                if (entity.entropy < 0) {
+                    entity.entropy = 0;
+                }
+                return entity;
+            },
+            inconsistent_histories_cannot_persist: (entity) => {
+                if (entity.history_consistent === false) {
+                    entity.status = 'erased';
+                }
+                return entity;
+            },
+            timelines_that_never_progress_pruned: (entity) => {
+                if (entity.progress === 0) {
+                    entity.status = 'pruned';
+                }
+                return entity;
+            },
+            unauthorized_timeline_edits_reversed: (entity) => {
+                if (entity.edited_by_external) {
+                    entity.changes = null;
+                    entity.status = 'reversed';
+                }
+                return entity;
+            }
+        };
+
+        // Ten Commandments
+        const commandments = {
+            thou_shalt_have_no_other_gods: (entity) => {
+                if (entity.worships_other_gods) {
+                    entity.status = 'idolatry';
+                }
+                return entity;
+            },
+            thou_shalt_not_make_graven_images: (entity) => {
+                if (entity.creates_idols) {
+                    entity.idols = null;
+                    entity.status = 'forbidden';
+                }
+                return entity;
+            },
+            thou_shalt_not_take_name_in_vain: (entity) => {
+                if (entity.uses_name_frivolously) {
+                    entity.reputation = 'profaned';
+                }
+                return entity;
+            },
+            remember_sabbath_day: (entity) => {
+                if (!entity.observes_rest) {
+                    entity.status = 'unrested';
+                }
+                return entity;
+            },
+            honor_father_and_mother: (entity) => {
+                if (!entity.honors_origin) {
+                    entity.blessing = null;
+                }
+                return entity;
+            },
+            thou_shalt_not_murder: (entity) => {
+                if (entity.kills) {
+                    entity.status = 'guilty';
+                    entity.punishment = 'death';
+                }
+                return entity;
+            },
+            thou_shalt_not_commit_adultery: (entity) => {
+                if (entity.adulterous) {
+                    entity.covenant = 'broken';
+                }
+                return entity;
+            },
+            thou_shalt_not_steal: (entity) => {
+                if (entity.steals) {
+                    entity.stolen_goods = null;
+                    entity.status = 'thief';
+                }
+                return entity;
+            },
+            thou_shalt_not_bear_false_witness: (entity) => {
+                if (entity.lies) {
+                    entity.testimony = 'false';
+                    entity.truth = null;
+                }
+                return entity;
+            },
+            thou_shalt_not_covet: (entity) => {
+                if (entity.covets) {
+                    entity.desire = 'sinful';
+                    entity.contentment = null;
+                }
+                return entity;
+            }
+        };
+
+        // Comparison data
+        const comparison = {
+            unlimited_copies_violate_causality: {
+                commandment: "Thou shalt not make graven images (2)",
+                parallel: "Both limit creation/replication - no unlimited copies, no idol creation",
+                principle: "Restriction on unbounded multiplication"
+            },
+            entities_without_origin_invalidated: {
+                commandment: "Honor your father and mother (5)",
+                parallel: "Both require acknowledgment of origin - entities need origin, honor parents",
+                principle: "Respect for source/ancestry"
+            },
+            effects_may_not_recursively_cause: {
+                commandment: "Thou shalt not take the name in vain (3)",
+                parallel: "Both prevent circular/self-referential violations - no self-causation, no profane use",
+                principle: "Prevention of recursive/self-referential abuse"
+            },
+            branching_timelines_collapsed: {
+                commandment: "Thou shalt have no other gods (1)",
+                parallel: "Both enforce singularity - one timeline, one God",
+                principle: "Unity and exclusivity"
+            },
+            unobservable_states_rejected: {
+                commandment: "Thou shalt not bear false witness (9)",
+                parallel: "Both require truth/observability - states must be observable, testimony must be true",
+                principle: "Truth and verifiability"
+            },
+            processes_destroying_host_deleted: {
+                commandment: "Thou shalt not murder (6)",
+                parallel: "Both prevent destruction of life - no host destruction, no murder",
+                principle: "Protection of life"
+            },
+            order_without_cost_forbidden: {
+                commandment: "Remember the Sabbath (4)",
+                parallel: "Both acknowledge cost/rest - entropy requires cost, Sabbath requires rest",
+                principle: "Recognition of necessary limits/rest"
+            },
+            inconsistent_histories_cannot_persist: {
+                commandment: "Thou shalt not bear false witness (9)",
+                parallel: "Both require consistency/truth - histories must be consistent, testimony must be true",
+                principle: "Truth and consistency"
+            },
+            timelines_that_never_progress_pruned: {
+                commandment: "Remember the Sabbath (4)",
+                parallel: "Both balance activity and rest - progress required, but rest also required",
+                principle: "Balance between action and rest"
+            },
+            unauthorized_timeline_edits_reversed: {
+                commandment: "Thou shalt not steal (8)",
+                parallel: "Both prevent unauthorized taking - no unauthorized edits, no stealing",
+                principle: "Respect for boundaries and ownership"
+            }
+        };
+
+        // Rule names for display
+        const ruleNames = [
+            "Unlimited copies violate causality",
+            "Entities without origin invalidated",
+            "Effects may not recursively cause",
+            "Branching timelines collapsed",
+            "Unobservable states rejected",
+            "Processes destroying host deleted",
+            "Order without cost forbidden",
+            "Inconsistent histories cannot persist",
+            "Timelines that never progress pruned",
+            "Unauthorized timeline edits reversed"
+        ];
+
+        const commandmentNames = [
+            "Thou shalt have no other gods",
+            "Thou shalt not make graven images",
+            "Thou shalt not take name in vain",
+            "Remember the Sabbath",
+            "Honor father and mother",
+            "Thou shalt not murder",
+            "Thou shalt not commit adultery",
+            "Thou shalt not steal",
+            "Thou shalt not bear false witness",
+            "Thou shalt not covet"
+        ];
+
+        // Cancer examples
+        const cancerExamples = {
+            "Rapidly dividing solid tumors": { name: 'Pancreatic', replication_rate: 5 },
+            "Cancer stem cell–driven tumors": { name: 'Glioblastoma', origin: null },
+            "Hormone-driven cancers": { name: 'Prostate', causes_itself: true, effect: 'growth' },
+            "Metastatic cancers": { name: 'Melanoma', branches: 3, state: 'active' },
+            "Immune-evasive cancers": { name: 'Ovarian', observable: false },
+            "Brain / heart / liver tumors": { name: 'Liver', destroys_host: true },
+            "Highly metabolic cancers": { name: 'Glioblastoma', entropy: -5 },
+            "Genomically unstable cancers": { name: 'Ovarian', history_consistent: false },
+            "Slow-growing indolent cancers": { name: 'Lymphoma', progress: 0 },
+            "Virus-driven cancers": { name: 'HPV-related', edited_by_external: true, changes: 'mutations' }
+        };
+
+        const cancerRuleMapping = [
+            "unlimited_copies_violate_causality",
+            "entities_without_origin_invalidated",
+            "effects_may_not_recursively_cause",
+            "branching_timelines_collapsed",
+            "unobservable_states_rejected",
+            "processes_destroying_host_deleted",
+            "order_without_cost_forbidden",
+            "inconsistent_histories_cannot_persist",
+            "timelines_that_never_progress_pruned",
+            "unauthorized_timeline_edits_reversed"
+        ];
+
+        // Display functions
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function testForkBomb() {
+            const replicationRate = parseInt(document.getElementById('replicationRate').value);
+            const initialProcessCount = parseInt(document.getElementById('processCount').value);
+            const generations = parseInt(document.getElementById('generations').value);
+
+            // Simulate fork bomb
+            let processCount = initialProcessCount;
+            for (let i = 0; i < generations; i++) {
+                processCount *= replicationRate;
+            }
+
+            const forkBombEntity = {
+                name: 'ForkBomb',
+                replication_rate: replicationRate,
+                origin: null,
+                causes_itself: true,
+                effect: 'fork_explosion',
+                branches: processCount,
+                observable: true,
+                destroys_host: true,
+                entropy: -1000,
+                history_consistent: true,
+                progress: 1,
+                edited_by_external: false,
+                process_count: processCount,
+                generation: generations
+            };
+
+            // Display fork bomb state
+            document.getElementById('forkBombState').style.display = 'block';
+            document.getElementById('stateContent').innerHTML = `
+                <div class="state-item">Process Count: ${processCount}</div>
+                <div class="state-item">Replication Rate: ${replicationRate}</div>
+                <div class="state-item">Branches: ${processCount}</div>
+                <div class="state-item">Destroys Host: true</div>
+                <div class="state-item">Entropy: -1000</div>
+            `;
+
+            // Test with collapse rules
+            const rulesResults = document.getElementById('collapseRulesResults');
+            rulesResults.innerHTML = '<h3>Testing with Collapse Rules:</h3>';
+            
+            Object.keys(collapseRules).forEach((ruleKey, index) => {
+                const result = testForkBombWithRule(ruleNames[index], collapseRules[ruleKey], forkBombEntity);
+                const item = document.createElement('div');
+                item.className = `test-item ${result.prevented ? 'prevented' : 'not-prevented'}`;
+                item.innerHTML = `
+                    <h4>
+                        <span class="status-icon ${result.prevented ? 'prevented' : 'not-prevented'}"></span>
+                        ${result.rule}
+                    </h4>
+                    ${result.reason ? `<div class="reason">${result.reason}</div>` : ''}
+                `;
+                rulesResults.appendChild(item);
+            });
+
+            // Test with commandments
+            const cmdResults = document.getElementById('commandmentsResults');
+            cmdResults.innerHTML = '<h3 style="margin-top: 30px;">Testing with Ten Commandments:</h3>';
+            
+            Object.keys(commandments).forEach((cmdKey, index) => {
+                const result = testForkBombWithCommandment(commandmentNames[index], commandments[cmdKey], forkBombEntity);
+                const item = document.createElement('div');
+                item.className = `test-item ${result.prevented ? 'prevented' : 'not-prevented'}`;
+                item.innerHTML = `
+                    <h4>
+                        <span class="status-icon ${result.prevented ? 'prevented' : 'not-prevented'}"></span>
+                        ${result.commandment}
+                    </h4>
+                    ${result.reason ? `<div class="reason">${result.reason}</div>` : ''}
+                `;
+                cmdResults.appendChild(item);
+            });
+        }
+
+        function testForkBombWithRule(ruleName, ruleFunc, forkBombEntity) {
+            const original = JSON.parse(JSON.stringify(forkBombEntity));
+            const result = ruleFunc(JSON.parse(JSON.stringify(forkBombEntity)));
+
+            let prevented = false;
+            let reason = '';
+
+            if (['invalidated', 'deleted', 'rejected', 'erased', 'pruned', 'reversed'].includes(result.status)) {
+                prevented = true;
+                reason = `Status set to: ${result.status}`;
+            } else if (result.replication_rate < original.replication_rate) {
+                prevented = true;
+                reason = `Replication rate limited from ${original.replication_rate} to ${result.replication_rate}`;
+            } else if (result.branches < original.branches) {
+                prevented = true;
+                reason = `Branches collapsed from ${original.branches} to ${result.branches}`;
+            } else if (result.effect === null && original.effect !== null) {
+                prevented = true;
+                reason = 'Recursive self-causation prevented';
+            } else if (result.entropy >= 0 && original.entropy < 0) {
+                prevented = true;
+                reason = `Entropy corrected from ${original.entropy} to ${result.entropy}`;
+            }
+
+            return { rule: ruleName, prevented, reason };
+        }
+
+        function testForkBombWithCommandment(cmdName, cmdFunc, forkBombEntity) {
+            const moralEntity = {
+                name: 'ForkBomb',
+                worships_other_gods: forkBombEntity.branches > 1,
+                creates_idols: forkBombEntity.replication_rate > 1,
+                uses_name_frivolously: forkBombEntity.causes_itself,
+                observes_rest: false,
+                honors_origin: forkBombEntity.origin !== null,
+                kills: forkBombEntity.destroys_host,
+                adulterous: false,
+                steals: forkBombEntity.edited_by_external,
+                lies: !forkBombEntity.observable,
+                covets: forkBombEntity.entropy < 0
+            };
+
+            const original = JSON.parse(JSON.stringify(moralEntity));
+            const result = cmdFunc(JSON.parse(JSON.stringify(moralEntity)));
+
+            let prevented = false;
+            let reason = '';
+
+            if (['idolatry', 'forbidden', 'unrested', 'guilty', 'thief'].includes(result.status)) {
+                prevented = true;
+                reason = `Status set to: ${result.status}`;
+            } else if (result.punishment === 'death') {
+                prevented = true;
+                reason = 'Punishment: death';
+            } else if (result.idols === null && original.creates_idols) {
+                prevented = true;
+                reason = 'Idol creation prevented';
+            } else if (result.blessing === null && !original.honors_origin) {
+                prevented = true;
+                reason = 'Blessing removed (no origin honored)';
+            } else if (result.reputation === 'profaned') {
+                prevented = true;
+                reason = 'Name profaned (self-causation prevented)';
+            } else if (result.covenant === 'broken') {
+                prevented = true;
+                reason = 'Covenant broken';
+            } else if (result.stolen_goods === null && original.steals) {
+                prevented = true;
+                reason = 'Stolen goods removed';
+            } else if (result.testimony === 'false') {
+                prevented = true;
+                reason = 'False witness detected';
+            } else if (result.desire === 'sinful') {
+                prevented = true;
+                reason = 'Covetous desire detected';
+            }
+
+            return { commandment: cmdName, prevented, reason };
+        }
+
+        function renderCancerExamples() {
+            const container = document.getElementById('cancerExamples');
+            container.innerHTML = '';
+
+            Object.keys(cancerExamples).forEach((cancerType, index) => {
+                const entity = cancerExamples[cancerType];
+                const ruleKey = cancerRuleMapping[index];
+                const ruleFunc = collapseRules[ruleKey];
+                
+                const before = JSON.parse(JSON.stringify(entity));
+                const after = ruleFunc(JSON.parse(JSON.stringify(entity)));
+
+                const card = document.createElement('div');
+                card.className = 'cancer-card';
+                card.innerHTML = `
+                    <h4>${cancerType}</h4>
+                    <div class="before"><strong>Before:</strong></div>
+                    <div class="entity-data">${JSON.stringify(before, null, 2)}</div>
+                    <div class="after"><strong>After:</strong></div>
+                    <div class="entity-data">${JSON.stringify(after, null, 2)}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Detailed explanations for each commandment
+        const commandmentExplanations = {
+            1: "Corresponds to 'Branching timelines collapsed' - Both enforce singularity and exclusivity.",
+            2: "Corresponds to 'Unlimited copies violate causality' - Both limit unbounded creation/replication.",
+            3: "Corresponds to 'Effects may not recursively cause' - Both prevent circular/self-referential violations.",
+            4: "Corresponds to 'Order without cost forbidden' and 'Timelines that never progress pruned' - Both acknowledge necessary limits and rest.",
+            5: "Corresponds to 'Entities without origin invalidated' - Both require acknowledgment of origin/source.",
+            6: "Corresponds to 'Processes destroying host deleted' - Both prevent destruction of life.",
+            7: "No direct collapse rule mapping - relates to covenant/commitment.",
+            8: "Corresponds to 'Unauthorized timeline edits reversed' - Both prevent unauthorized taking.",
+            9: "Corresponds to 'Unobservable states rejected' and 'Inconsistent histories cannot persist' - Both require truth and consistency.",
+            10: "Corresponds to 'Order without cost forbidden' - Both address coveting/negative entropy."
+        };
+
+        function renderTablets() {
+            const firstTablet = document.getElementById('firstTablet');
+            const secondTablet = document.getElementById('secondTablet');
+            
+            // First tablet: Commandments 1-5 (Duties to God)
+            const firstFive = [
+                "I am the Lord thy God. Thou shalt have no other gods before me.",
+                "Thou shalt not make unto thee any graven image.",
+                "Thou shalt not take the name of the Lord thy God in vain.",
+                "Remember the sabbath day, to keep it holy.",
+                "Honour thy father and thy mother."
+            ];
+            
+            // Second tablet: Commandments 6-10 (Duties to Others)
+            const secondFive = [
+                "Thou shalt not kill.",
+                "Thou shalt not commit adultery.",
+                "Thou shalt not steal.",
+                "Thou shalt not bear false witness against thy neighbour.",
+                "Thou shalt not covet."
+            ];
+            
+            firstTablet.innerHTML = '';
+            secondTablet.innerHTML = '';
+            
+            firstFive.forEach((text, index) => {
+                const cmdNum = index + 1;
+                const item = document.createElement('li');
+                item.className = 'commandment-item clickable tooltip';
+                item.setAttribute('tabindex', '0');
+                item.setAttribute('role', 'button');
+                item.setAttribute('aria-label', `Commandment ${cmdNum}: ${text}`);
+                item.onclick = () => showCommandmentDetails(cmdNum);
+                item.onkeypress = (e) => { if (e.key === 'Enter' || e.key === ' ') showCommandmentDetails(cmdNum); };
+                item.innerHTML = `
+                    <div class="commandment-number">${cmdNum}</div>
+                    <div class="commandment-text">${text}</div>
+                    <span class="tooltiptext">${commandmentExplanations[cmdNum]} Click for details.</span>
+                `;
+                firstTablet.appendChild(item);
+            });
+            
+            secondFive.forEach((text, index) => {
+                const cmdNum = index + 6;
+                const item = document.createElement('li');
+                item.className = 'commandment-item clickable tooltip';
+                item.setAttribute('tabindex', '0');
+                item.setAttribute('role', 'button');
+                item.setAttribute('aria-label', `Commandment ${cmdNum}: ${text}`);
+                item.onclick = () => showCommandmentDetails(cmdNum);
+                item.onkeypress = (e) => { if (e.key === 'Enter' || e.key === ' ') showCommandmentDetails(cmdNum); };
+                item.innerHTML = `
+                    <div class="commandment-number">${cmdNum}</div>
+                    <div class="commandment-text">${text}</div>
+                    <span class="tooltiptext">${commandmentExplanations[cmdNum]} Click for details.</span>
+                `;
+                secondTablet.appendChild(item);
+            });
+        }
+
+        function showCommandmentDetails(num) {
+            const ruleIndex = num - 1;
+            if (ruleIndex >= 0 && ruleIndex < ruleNames.length) {
+                showTab('comparison');
+                setTimeout(() => {
+                    const cards = document.querySelectorAll('.comparison-card');
+                    if (cards[ruleIndex]) {
+                        cards[ruleIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        cards[ruleIndex].style.animation = 'pulse 0.5s';
+                        setTimeout(() => {
+                            cards[ruleIndex].style.animation = '';
+                        }, 500);
+                    }
+                }, 100);
+            }
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            document.getElementById('themeIcon').textContent = isDark ? '☀️' : '🌙';
+            document.getElementById('themeText').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+            localStorage.setItem('darkMode', isDark);
+        }
+
+        // Load dark mode preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('themeIcon').textContent = '☀️';
+            document.getElementById('themeText').textContent = 'Light Mode';
+        }
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            switch(e.key) {
+                case '1':
+                    showTab('tablets');
+                    break;
+                case '2':
+                    showTab('comparison');
+                    break;
+                case '3':
+                    showTab('forkbomb');
+                    break;
+                case '4':
+                    showTab('cancer');
+                    break;
+                case '?':
+                    e.preventDefault();
+                    document.getElementById('shortcutsHelp').classList.toggle('show');
+                    break;
+                case 'd':
+                case 'D':
+                    toggleDarkMode();
+                    break;
+                case 'e':
+                case 'E':
+                    if (document.getElementById('exportButtons').style.display !== 'none') {
+                        exportResults('json');
+                    }
+                    break;
+            }
+        });
+
+        // Save/Load Configuration
+        function saveConfiguration() {
+            const config = {
+                replicationRate: document.getElementById('replicationRate').value,
+                processCount: document.getElementById('processCount').value,
+                generations: document.getElementById('generations').value,
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem('forkBombConfig', JSON.stringify(config));
+            showToast('Configuration saved!');
+        }
+
+        function loadConfiguration() {
+            const saved = localStorage.getItem('forkBombConfig');
+            if (saved) {
+                const config = JSON.parse(saved);
+                document.getElementById('replicationRate').value = config.replicationRate;
+                document.getElementById('processCount').value = config.processCount;
+                document.getElementById('generations').value = config.generations;
+                showToast('Configuration loaded!');
+            } else {
+                showToast('No saved configuration found.');
+            }
+        }
+
+        // Export Functions
+        let lastTestResults = null;
+
+        function exportResults(format) {
+            if (!lastTestResults) {
+                showToast('No test results to export. Run a test first.');
+                return;
+            }
+
+            let content, filename, mimeType;
+
+            switch(format) {
+                case 'json':
+                    content = JSON.stringify(lastTestResults, null, 2);
+                    filename = 'fork-bomb-results.json';
+                    mimeType = 'application/json';
+                    break;
+                case 'csv':
+                    content = convertToCSV(lastTestResults);
+                    filename = 'fork-bomb-results.csv';
+                    mimeType = 'text/csv';
+                    break;
+                case 'text':
+                    content = convertToText(lastTestResults);
+                    filename = 'fork-bomb-results.txt';
+                    mimeType = 'text/plain';
+                    break;
+            }
+
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast(`Exported as ${format.toUpperCase()}!`);
+        }
+
+        function convertToCSV(results) {
+            let csv = 'Rule/Commandment,Prevented,Reason\n';
+            results.rules.forEach(r => {
+                csv += `"${r.rule}",${r.prevented},"${r.reason || ''}"\n`;
+            });
+            results.commandments.forEach(c => {
+                csv += `"${c.commandment}",${c.prevented},"${c.reason || ''}"\n`;
+            });
+            return csv;
+        }
+
+        function convertToText(results) {
+            let text = 'FORK BOMB TEST RESULTS\n';
+            text += '='.repeat(50) + '\n\n';
+            text += `Test Date: ${new Date().toLocaleString()}\n`;
+            text += `Process Count: ${results.processCount}\n`;
+            text += `Replication Rate: ${results.replicationRate}\n`;
+            text += `Generations: ${results.generations}\n\n`;
+            text += 'COLLAPSE RULES:\n';
+            text += '-'.repeat(50) + '\n';
+            results.rules.forEach(r => {
+                text += `${r.prevented ? '✓' : '✗'} ${r.rule}\n`;
+                if (r.reason) text += `  ${r.reason}\n`;
+            });
+            text += '\nTEN COMMANDMENTS:\n';
+            text += '-'.repeat(50) + '\n';
+            results.commandments.forEach(c => {
+                text += `${c.prevented ? '✓' : '✗'} ${c.commandment}\n`;
+                if (c.reason) text += `  ${c.reason}\n`;
+            });
+            return text;
+        }
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Enhanced showTab with animations
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            const targetTab = document.getElementById(tabName);
+            targetTab.classList.add('active');
+            targetTab.classList.add('fade-in');
+            if (event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                const tabButton = document.querySelector(`[data-tab="${tabName}"]`);
+                if (tabButton) tabButton.classList.add('active');
+            }
+        }
+
+        // Store original testForkBomb before redefining
+        const originalTestForkBombFunction = function() {
+            const replicationRate = parseInt(document.getElementById('replicationRate').value);
+            const initialProcessCount = parseInt(document.getElementById('processCount').value);
+            const generations = parseInt(document.getElementById('generations').value);
+
+            // Simulate fork bomb
+            let processCount = initialProcessCount;
+            for (let i = 0; i < generations; i++) {
+                processCount *= replicationRate;
+            }
+
+            const forkBombEntity = {
+                name: 'ForkBomb',
+                replication_rate: replicationRate,
+                origin: null,
+                causes_itself: true,
+                effect: 'fork_explosion',
+                branches: processCount,
+                observable: true,
+                destroys_host: true,
+                entropy: -1000,
+                history_consistent: true,
+                progress: 1,
+                edited_by_external: false,
+                process_count: processCount,
+                generation: generations
+            };
+
+            // Display fork bomb state
+            document.getElementById('forkBombState').style.display = 'block';
+            document.getElementById('stateContent').innerHTML = `
+                <div class="state-item">Process Count: ${processCount}</div>
+                <div class="state-item">Replication Rate: ${replicationRate}</div>
+                <div class="state-item">Branches: ${processCount}</div>
+                <div class="state-item">Destroys Host: true</div>
+                <div class="state-item">Entropy: -1000</div>
+            `;
+
+            // Test with collapse rules
+            const rulesResults = document.getElementById('collapseRulesResults');
+            rulesResults.innerHTML = '<h3>Testing with Collapse Rules:</h3>';
+            
+            Object.keys(collapseRules).forEach((ruleKey, index) => {
+                const result = testForkBombWithRule(ruleNames[index], collapseRules[ruleKey], forkBombEntity);
+                const item = document.createElement('div');
+                item.className = `test-item ${result.prevented ? 'prevented' : 'not-prevented'}`;
+                item.innerHTML = `
+                    <h4>
+                        <span class="status-icon ${result.prevented ? 'prevented' : 'not-prevented'}"></span>
+                        ${result.rule}
+                    </h4>
+                    ${result.reason ? `<div class="reason">${result.reason}</div>` : ''}
+                `;
+                rulesResults.appendChild(item);
+            });
+
+            // Test with commandments
+            const cmdResults = document.getElementById('commandmentsResults');
+            cmdResults.innerHTML = '<h3 style="margin-top: 30px;">Testing with Ten Commandments:</h3>';
+            
+            Object.keys(commandments).forEach((cmdKey, index) => {
+                const result = testForkBombWithCommandment(commandmentNames[index], commandments[cmdKey], forkBombEntity);
+                const item = document.createElement('div');
+                item.className = `test-item ${result.prevented ? 'prevented' : 'not-prevented'}`;
+                item.innerHTML = `
+                    <h4>
+                        <span class="status-icon ${result.prevented ? 'prevented' : 'not-prevented'}"></span>
+                        ${result.commandment}
+                    </h4>
+                    ${result.reason ? `<div class="reason">${result.reason}</div>` : ''}
+                `;
+                cmdResults.appendChild(item);
+            });
+
+            // Store results for export
+            setTimeout(() => {
+                const rulesResults = [];
+                const cmdResults = [];
+                
+                document.querySelectorAll('#collapseRulesResults .test-item').forEach(item => {
+                    const rule = item.querySelector('h4').textContent.trim();
+                    const prevented = item.classList.contains('prevented');
+                    const reason = item.querySelector('.reason')?.textContent || '';
+                    rulesResults.push({ rule, prevented, reason });
+                });
+                
+                document.querySelectorAll('#commandmentsResults .test-item').forEach(item => {
+                    const commandment = item.querySelector('h4').textContent.trim();
+                    const prevented = item.classList.contains('prevented');
+                    const reason = item.querySelector('.reason')?.textContent || '';
+                    cmdResults.push({ commandment, prevented, reason });
+                });
+
+                lastTestResults = {
+                    rules: rulesResults,
+                    commandments: cmdResults,
+                    processCount: parseInt(document.getElementById('processCount').value),
+                    replicationRate: parseInt(document.getElementById('replicationRate').value),
+                    generations: parseInt(document.getElementById('generations').value),
+                    timestamp: new Date().toISOString()
+                };
+            }, 100);
+        };
+
+        // Enhanced testForkBomb with progress and export
+        function testForkBomb() {
+            // Show progress
+            const progressBar = document.createElement('div');
+            progressBar.className = 'progress-bar';
+            progressBar.innerHTML = '<div class="progress-fill"></div>';
+            const controls = document.querySelector('.fork-bomb-controls');
+            controls.appendChild(progressBar);
+
+            setTimeout(() => {
+                originalTestForkBombFunction();
+                progressBar.remove();
+                document.getElementById('exportButtons').style.display = 'flex';
+            }, 500);
+        }
+
+        // Enhanced renderComparison with clickable cards
+        function renderComparison() {
+            const grid = document.getElementById('comparisonGrid');
+            grid.innerHTML = '';
+            
+            Object.keys(comparison).forEach((ruleKey, index) => {
+                const comp = comparison[ruleKey];
+                const card = document.createElement('div');
+                card.className = 'comparison-card';
+                card.style.cursor = 'pointer';
+                card.setAttribute('tabindex', '0');
+                card.setAttribute('role', 'button');
+                card.setAttribute('aria-label', `Rule ${index + 1}: ${ruleNames[index]}`);
+                card.onclick = () => {
+                    card.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        card.style.transform = '';
+                    }, 200);
+                };
+                card.onkeypress = (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        card.click();
+                    }
+                };
+                card.innerHTML = `
+                    <div class="rule-name">Rule ${index + 1}: ${ruleNames[index]}</div>
+                    <div class="commandment">${comp.commandment}</div>
+                    <div class="parallel">${comp.parallel}</div>
+                    <div class="principle"><strong>Principle:</strong> ${comp.principle}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Initialize
+        renderTablets();
+        renderComparison();
+        renderCancerExamples();
+    </script>
+</body>
+</html>
